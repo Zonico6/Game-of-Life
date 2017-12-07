@@ -1,3 +1,1 @@
-fn main() {
-    println!("Hello, world!");
-}
+mod game_of_life_logic;
