@@ -1,0 +1,6 @@
+[package]
+name = "GameOfLife"
+version = "0.1.0"
+authors = ["Zonico6 <Zonico67@gmail.com>"]
+
+[dependencies]
