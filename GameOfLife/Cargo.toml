@@ -1,6 +1,12 @@
 [package]
 name = "GameOfLife"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Zonico6 <Zonico67@gmail.com>"]
 
+[lib]
+name = "game_of_life_base"
+path = "src/lib.rs"
+
 [dependencies]
+piston = "0.35.0"
+piston_window = "0.74.0"
