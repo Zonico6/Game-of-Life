@@ -1,0 +1,33 @@
+// Universal Syntax
+"creature_name": {
+	"description": "The creature's description.",
+	"attributes": {
+		// Creature attributes for that specific type of creature
+	},
+	"clusters": [
+		// Clusters of cells that are more efficient to store with this notation
+		// Format: [x-pos, y-pos, x-extension, y-extension]
+	],
+	"cells": [
+		// The positions of the several cells
+		// Format: [x-pos, y-pos]
+	]
+}
+
+// Example
+"glider": {
+	"attributes": {
+		"direction": "top-left"
+	},
+	"description": "This creature glides over the screen.",
+	"cells": [
+		[0, 0],
+		[0, 1],
+		[0, 2],
+		[1, 2],
+		[2, 1]
+	],
+	"clusters": [
+		[0, 0, 3, 2]
+	]
+}
