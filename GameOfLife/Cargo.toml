@@ -7,6 +7,11 @@ authors = ["Zonico6 <Zonico67@gmail.com>"]
 name = "game_of_life_base"
 path = "src/lib.rs"
 
+[dependencies.lib]
+serde = "1.0"
+serde_derive = "1.0"
+serde_json = "1.0"
+
 [dependencies]
 piston = "0.35.0"
 piston_window = "0.74.0"

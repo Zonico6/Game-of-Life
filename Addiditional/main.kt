@@ -26,14 +26,20 @@ open class GameOfLifeLogic(var points: PointSet = PointSet()) {
     fun next(): PointSet {
         return if (next == null) {
                 val retSet = PointSet()
+                val covered = PointSet()
+
                 points.filterTo(retSet) { it.survives(this.cast()) }
 
                 // TODO: Optimize: In performance as well as readability
                 for (point in points) {
                     for (x in point.x-1 .. point.x+1) {
                         for (y in point.y-1 .. point.y+1) {
+                        	covered.add(point)
+
                             val p = Point(x, y)
-                            if (!points.contains(Point(x, y))) {
+                            if (!covered.contains(p) &&
+                            	!points.contains(Point(x, y)) &&
+                            	p.livingNeighbours(this.cast()) == 3) {
                                 if (p.livingNeighbours(this.cast()) == 3)
                                     retSet.add(p)
                             }
@@ -52,14 +58,12 @@ open class GameOfLifeLogic(var points: PointSet = PointSet()) {
         else -> false
     }
     private fun Point.livingNeighbours(points: PointSet): Int {
-        val covered = PointSet()
         var neighbours = 0
         for (x in this.x-1 .. this.x + 1) {
             for (y in this.y-1 .. this.y+1) {
                 val p = Point(x, y)
-                if (points.contains(p) && !covered.contains(p) && this != p) {
+                if (points.contains(p) && this != p) {
                     neighbours += 1
-                    covered.add(p)
                 }
             }
         }

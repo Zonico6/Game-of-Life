@@ -27,10 +27,15 @@ fn main() {
     // Draw on screen
     while let Some(event) = window.next() {
         if let Some(button_args) = event.button_args() {
-            match button_args.button {
-
+            if let Button::Mouse(mouse_button) = button_args.button {
+                if button_args.state == ButtonState::Press {
+                    match mouse_button {
+                        MouseButton::Left => goll.tick(),
+                        MouseButton::Right => goll.tick_times(400),
+                        _ => println!("Button not supported!")
+                    }
+                }
             }
-            goll.tick();
         }
 
         window.draw_2d(&event, |context, graphics| {

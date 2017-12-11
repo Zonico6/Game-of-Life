@@ -21,6 +21,11 @@ impl GameOfLifeLogic {
         self.cells = CellSet::clone(self.next());
         self.next = None;
     }
+    pub fn tick_times(&mut self, times: u16) {
+        for i in 0..times {
+            self.tick();
+        }
+    }
 
     pub fn next(&mut self) -> &CellSet {
         match self.next {
