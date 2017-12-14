@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 pub type CellSet = HashSet<Point>;
 
-#[derive(Debug, Hash, Clone, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Hash, Clone, Eq, PartialEq)]
 pub struct Point {
     pub x: i32,
     pub y: i32
@@ -86,7 +86,7 @@ impl GameOfLifeLogic {
     pub fn add(&mut self, x: i32, y: i32) {
         self.cells.insert(Point {x, y});
     }
-    pub fn contains(&mut self, point: Point) -> bool {
-        self.cells.contains(&point)
+    pub fn contains(mut self, point:  &Point) -> bool {
+        self.cells.contains(point)
     }
 }

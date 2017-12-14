@@ -1,9 +1,9 @@
 // Universal Syntax
 "creature_name": {
 	"description": "The creature's description.",
-	"attributes": {
-		// Creature attributes for that specific type of creature
-	},
+	"attributes": [
+			// Creature attributes for that specific type of creature
+	],
 	"clusters": [
 		// Clusters of cells that are more efficient to store with this notation
 		// Format: [x-pos, y-pos, x-extension, y-extension]
