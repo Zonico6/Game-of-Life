@@ -31,7 +31,6 @@ impl GameOfLifeLogic {
         match self.next {
             Some(ref next) => &next,
             None => {
-                // TODO: Optimize in readability
                 let mut ret_set = CellSet::new();
                 let mut covered = CellSet::new();
 
