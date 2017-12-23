@@ -24,7 +24,7 @@ fn swap_value<T: Ord>(hash_set: &mut BTreeSet<T>, value: T) {
 // TODO: Correct Iterator
 /// Parses all the usable files in the provided directory and
 /// converts the Json to in-memory creatures
-pub fn make_creatures(file_paths: Vec<isize>) -> Creatures {
+pub fn make_creatures<T: Iterator>(file_paths: T) -> Creatures {
     for path in file_paths {
         unimplemented!()
     }
@@ -59,10 +59,30 @@ impl ClusterLayer {
     fn new(vertices: Vec<isize>, height: usize, pos: isize) -> ClusterLayer {
         ClusterLayer {pos, height, vertices}
     }
+
+    /// Integrate a section between two vertices of a ClusterLayer
+    fn integrate_section(&self, cell_set: &mut CellSet, vertices: (isize, isize)) {
+        for x in vertices.0 .. vertices.1 + 1 {
+            for y in pos .. pos + height {
+                cell_set.insert(Point {x, y});
+            }
+        }
+    }
 }
+
+/// Parse the vertices from left to right and take turns between integrating a section
+/// and preparing the integration of the next section
 impl CellSetIntegrable for ClusterLayer {
     fn integrate(self, cell_set: &mut CellSet) {
-        unimplemented!();
+        let mut last = None;
+        for vert in &vertices {
+            if let Some(last_vert) = last {
+                self.integrate_section(last_vert, vert);
+                last = None;
+            } else {
+                last = Some(vert);
+            }
+        }
     }
 }
 
