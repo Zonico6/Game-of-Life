@@ -51,12 +51,12 @@ enum CellContainer {
 /// A vertex layer within a Cluster
 struct ClusterLayer {
     height: u16,
-    pos: i32,
-    vertices: Vec<i32>,
+    pos: isize,
+    vertices: Vec<isize>,
 }
 
 impl ClusterLayer {
-    fn new(vertices: Vec<i32>, height: u16, pos: i32) -> ClusterLayer {
+    fn new(vertices: Vec<isize>, height: u16, pos: isize) -> ClusterLayer {
         ClusterLayer {pos, height, vertices}
     }
 }
@@ -90,7 +90,7 @@ impl CellSetIntegrable for Cluster {
             swap_value(&mut vertex_table, this_vert);
 
             if last_vert.y != this_vert.y {
-                let mut new_layer_verts: Vec<i32> = Vec::new();
+                let mut new_layer_verts: Vec<isize> = Vec::new();
 
                 for vertex in &vertex_table {
                     new_layer_verts.push(vertex.x);
@@ -107,7 +107,7 @@ impl CellSetIntegrable for Cluster {
         for except in self.except {
             match except {
                 CellContainer::Cluster(cluster) => {
-                    *cluster.integrate(&mut except_set);
+                    cluster.integrate(&mut except_set);
                 }
                 CellContainer::Cell(cell) => {
                     except_set.insert(cell);

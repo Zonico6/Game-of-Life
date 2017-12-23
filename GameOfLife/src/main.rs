@@ -3,10 +3,13 @@ extern crate piston;
 extern crate game_of_life_base;
 
 use game_of_life_base::game_of_life_logic::*;
+use game_of_life_base::cell_containers::make_creatures;
 use piston_window::*;
 
+use std::fs;
+
 fn main() {
-    // Setup
+    // Setup: Command Line args
     let mut goll = GameOfLifeLogic::new();
     for (i, arg) in std::env::args().enumerate() {
         if i == 0 { continue; }
@@ -16,6 +19,8 @@ fn main() {
         println!("Your input was: {} and {}!", x, y);
         goll.add(x, y);
     }
+
+    let creatures = make_creatures("./res");
 
     let cell_size: f64 = 5.0;
 

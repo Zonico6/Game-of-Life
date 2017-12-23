@@ -4,4 +4,4 @@
 extern crate serde_derive;
 
 pub mod game_of_life_logic;
-pub mod cell_set_builder;
+pub mod cell_containers;

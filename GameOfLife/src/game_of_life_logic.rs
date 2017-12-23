@@ -4,8 +4,8 @@ pub type CellSet = HashSet<Point>;
 
 #[derive(Serialize, Deserialize, Debug, Hash, Ord, PartialOrd, Clone, Eq, PartialEq)]
 pub struct Point {
-    pub x: i32,
-    pub y: i32
+    pub x: isize,
+    pub y: isize
 }
 
 pub struct GameOfLifeLogic {
@@ -84,7 +84,7 @@ impl GameOfLifeLogic {
         self.cells.insert(point);
     }
     // Yes, terrible naming. No, I do not care.
-    pub fn add(&mut self, x: i32, y: i32) {
+    pub fn add(&mut self, x: isize, y: isize) {
         self.cells.insert(Point {x, y});
     }
     pub fn contains(&mut self, point:  &Point) -> bool {
