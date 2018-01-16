@@ -11,7 +11,13 @@ type Clusters = Vec<Cluster>;
 type Creatures = Vec<Creature>;
 type Attributes = Vec<String>;
 
-type CellRect = (Point, Point);
+const DIR_EMPTY: u8 = 0b0000;
+const DIR_UP: u8 =    0b0001;
+const DIR_DOWN: u8 =  0b0010;
+const DIR_RIGHT: u8 = 0b0100;
+const DIR_LEFT: u8 =  0b1000;
+
+const DIRECTION_PRIORITIES: [u8; 4] = [DIR_RIGHT, DIR_UP, DIR_LEFT, DIR_DOWN];
 
 fn swap_value<T: Ord>(hash_set: &mut BTreeSet<T>, value: T) {
     if hash_set.contains(&value) {
@@ -33,9 +39,82 @@ pub fn make_creatures<T: Iterator>(file_paths: T) -> Creatures {
 /// Compresses a given CellSet to a Creature object, which efficiently stores the cells and
 /// is therefore most appropriate for converting to Json
 ///
-/// Beginning at the top, cycling counter-clockwise
-fn compress(cells: CellSet) -> (CellSet, Clusters) {
-    unimplemented!();
+/// Beginning at the top-left, cycling counter-clockwise
+fn compress(mut cells: CellSet) -> (CellSet, Clusters) {
+    while cells.len() != 0 {
+        compress_individual(&mut cells, cells[0]); // FixMe: Indexing flaw
+    }
+}
+
+/// Depending on what it encounters, it either moves the
+/// cell into the CellContainer or compresses the Cluster
+fn compress_individual(cells: &mut CellSet, cell: Point) -> CellContainer {
+    let neighbours = neighbours(cells, cell);
+    if neighbours == DIR_EMPTY {
+        cells.remove(cell);
+        CellContainer::Cell(cell)
+    } else {
+        let cluster = compress_cluster(cells, cell);
+        cells.remove(cluster);
+        cluster
+    }
+}
+
+/// Returns upper left cell of this cluster so the compress_cluster method can start compressing
+fn compression_starting_point(cells: &CellSet, mut cell: Point) -> Point {
+    while cells.contains(Point {x: cell.x, y: cell.y + 1}) {
+        cell.y += 1;
+    }
+    while cells.contains(Point {x: cell.x - 1, y: cell.y}) {
+        cell.x -= 1;
+    }
+    cell
+}
+
+fn compress_cluster(cells: &CellSet, cell: Point) -> Cluster {
+    let mut vertices = Vec![compression_starting_point(cells, cell)];
+    let from_dir = Directions(DIR_RIGHT);
+    loop {
+        let (next, from_dir) = next_vertex(cells, vertices.last().unwrap(), from_dir);
+        if next == vertices.first().unwrap() {
+            vertices
+        } else {
+            vertices.push(next);
+        }
+    }
+    let mt
+    let mut cluster = Cluster {vertices, except};
+}
+
+/// Moves on to the next Vertex and returns it
+fn next_vertex(cells: &CellSet, last_vert: Point, disabled_dirs: Directions) -> (Point, Directions) {
+    let neighbours = neighbours(cells, cell);
+    for dir in DIRECTION_PRIORITIES {
+        if neighbours.contains(dir) {
+            while cells.contains(dir.on_point(cell)) {
+                cell.x -= dir.on_point(cell);
+            }
+            (cell, dir)
+        }
+    }
+}
+
+/// Returns all the directions, the cell have neighbours in
+fn neighbours(cells: &CellSet, cell: Point) -> Directions {
+    let mut dirs = Direction(0);
+    if cells.contains(Point {x: cell.x + 1, y: cell.y}) {
+        dirs.add(DIR_RIGHT);
+    }
+    if cells.contains(Point {x: cell.x, y: cell.y + 1}) {
+        dirs.add(DIR_UP);
+    }
+    if cells.contains(Point {x: cell.x - 1, y: cell.y}) {
+        dirs.add(DIR_LEFT);
+    }
+    if cells.contains(Point {x: cell.x, y: cell.y - 1}) {
+        dirs.add(DIR_DOWN);
+    }
+    dirs
 }
 
 trait CellSetIntegrable {
@@ -46,6 +125,37 @@ trait CellSetIntegrable {
 enum CellContainer {
     Cluster(Box<Cluster>),
     Cell(Point),
+}
+
+struct Directions(u8);
+impl Directions {
+    fn remove(&mut self, dirs: Directions) {
+        self.0 &= !dirs.0
+    }
+
+    fn add(&mut self, dirs: Directions) {
+        self.0 |= dirs.0
+    }
+
+    fn on_point(&self, mut point: Point) -> Point {
+        if self.contains(DIR_RIGHT) {
+            point = Point {x: point.x + 1, y: point.y}
+        }
+        if self.contains(DIR_LEFT) {
+            point = Point {x: point.x - 1, y: point.y}
+        }
+        if self.contains(DIR_UP) {
+            point = Point {x: point.x, y: point.y + 1}
+        }
+        if self.contains(DIR_DOWNs) {
+            point = Point {x: point.x, y: point.y - 1}
+        }
+        point
+    }
+
+    fn contains(&self, dirs: Directions) -> bool {
+        (self.0 & dirs.0) == dirs.0
+    }
 }
 
 /// A vertex layer within a Cluster
@@ -92,6 +202,15 @@ impl CellSetIntegrable for ClusterLayer {
 struct Cluster {
     vertices: Vec<Point>,
     except: Vec<CellContainer>,
+}
+
+impl Cluster {
+    fn new_complete(vertices: Vec<Point>) -> Cluster {
+        Cluster {vertices, except: Vec::new()}
+    }
+    fn new(vertices: Vec<Point>, except: Vec<CellContainer>) -> Cluster {
+        Cluster {vertices, except}
+    }
 }
 
 /// Essentially moving up a creature's vertices and thus splitting up the creature
